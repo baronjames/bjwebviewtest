@@ -5,91 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!--Include jquery because kdizzle probably uses it-->
-    <script src="jquery-3.2.1.min.js"></script>
-
-    <script>
-        $(document).ready(function(){
-
-            const the_body = $('body');
-            const checkmark_html = '<span class="checkmark"></span>';
-            //NOTE: "select_only_one_playlist" is used to "toggle" select many/select one (i.e. checkboxes vs radio buttons)
-            const select_only_one_playlist = true;
-
-            the_body.on('click', '.select_icon_container', function () {
-                console.log('select_icon_container clicked!');
-                var icon_container = $(this);
-                var icon = icon_container.find('.arc');
-                var parent_list_item_container = icon_container.closest('.list_item_container');
-                var playlist_id = parent_list_item_container.prop('id');
-
-                if(parent_list_item_container.hasClass('selected'))
-                {
-                    parent_list_item_container.removeClass('selected').find('.arc').removeClass('arc_partial arc_full').find('span.checkmark').remove();
-                }
-                else
-                {
-                    if(select_only_one_playlist)
-                    {
-                        parent_list_item_container.closest('.list_container').find('.list_item_container').removeClass('selected').find('.arc').removeClass('arc_partial arc_full').find('span.checkmark').remove();
-                    }
-
-                    parent_list_item_container.addClass('selected');
-                    if(parent_list_item_container.hasClass('partial_playlist'))
-                    {
-                        //TODO: tell the user they don't have all songs in playlist
-                        console.log('partial playlist selected! id = ',playlist_id);
-                        icon.addClass('arc_partial').html(checkmark_html);
-                    }
-                    else
-                    {
-                        console.log('full playlist selected! id = ',playlist_id);
-                        icon.addClass('arc_full').html(checkmark_html);
-                    }
-                }
-
-                displayStartSessionButton();
-
-            });
-
-            the_body.on('click', '#start_session_button', function () {
-                console.log('start_session_button clicked!');
-                //TODO: hook in backend thing here to start session
-
-            });
-
-            //This function can be used to decide if a session can be started, for now it will just show when a playlist is selected
-            function displayStartSessionButton()
-            {
-                var selected_playlists = the_body.find('.list_item_container.selected');
-                var start_session_button = $('#start_session_button');
-
-                if(selected_playlists.length > 0)
-                {
-                    if(select_only_one_playlist)
-                    {
-                        var playlist_id_selected = selected_playlists.prop('id');
-                        start_session_button.slideDown();
-                    }
-                    else
-                    {
-                        //TODO: this depends backend factors (i.e. can we select multiple soundcloud playlists)
-                    }
-
-                }
-                else
-                {
-                    start_session_button.slideUp();
-                }
-            }
-
-        });//end document.ready function
 
 
-
-    </script>
-
-    <title>Title</title>
+    <title>SoundCloud Playlist Picker</title>
     <style>
 
         body {
@@ -167,10 +85,11 @@
         .list_item_container .select_icon_container {
             justify-content: center;
             width: 20%;
+            cursor: pointer;
         }
         #start_session_button {
             display: none;
-            font-size: 25px;
+            font-size: 20px;
             position: fixed;
             bottom: -1px;
             right: 0;
@@ -451,4 +370,87 @@
 </div>
 
 </body>
+<!--Include jquery because kdizzle probably uses it-->
+<script src="jquery-3.2.1.min.js"></script>
+
+<script>
+    $(document).ready(function(){
+
+        const the_body = $('body');
+        const checkmark_html = '<span class="checkmark"></span>';
+        //NOTE: "select_only_one_playlist" is used to "toggle" select many/select one (i.e. checkboxes vs radio buttons)
+        const select_only_one_playlist = true;
+
+        the_body.on('click', '.select_icon_container', function () {
+            console.log('select_icon_container clicked!');
+            var icon_container = $(this);
+            var icon = icon_container.find('.arc');
+            var parent_list_item_container = icon_container.closest('.list_item_container');
+            var playlist_id = parent_list_item_container.prop('id');
+
+            if(parent_list_item_container.hasClass('selected'))
+            {
+                parent_list_item_container.removeClass('selected').find('.arc').removeClass('arc_partial arc_full').find('span.checkmark').remove();
+            }
+            else
+            {
+                if(select_only_one_playlist)
+                {
+                    parent_list_item_container.closest('.list_container').find('.list_item_container').removeClass('selected').find('.arc').removeClass('arc_partial arc_full').find('span.checkmark').remove();
+                }
+
+                parent_list_item_container.addClass('selected');
+                if(parent_list_item_container.hasClass('partial_playlist'))
+                {
+                    //TODO: tell the user they don't have all songs in playlist
+                    console.log('partial playlist selected! id = ',playlist_id);
+                    icon.addClass('arc_partial').html(checkmark_html);
+                }
+                else
+                {
+                    console.log('full playlist selected! id = ',playlist_id);
+                    icon.addClass('arc_full').html(checkmark_html);
+                }
+            }
+
+            displayStartSessionButton();
+
+        });
+
+        the_body.on('click', '#start_session_button', function () {
+            console.log('start_session_button clicked!');
+            //TODO: hook in backend thing here to start session
+
+        });
+
+        //This function can be used to decide if a session can be started, for now it will just show when a playlist is selected
+        function displayStartSessionButton()
+        {
+            var selected_playlists = the_body.find('.list_item_container.selected');
+            var start_session_button = $('#start_session_button');
+
+            if(selected_playlists.length > 0)
+            {
+                if(select_only_one_playlist)
+                {
+                    var playlist_id_selected = selected_playlists.prop('id');
+                    start_session_button.slideDown();
+                }
+                else
+                {
+                    //TODO: this depends backend factors (i.e. can we select multiple soundcloud playlists)
+                }
+
+            }
+            else
+            {
+                start_session_button.slideUp();
+            }
+        }
+
+    });//end document.ready function
+
+
+
+</script>
 </html>
