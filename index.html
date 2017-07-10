@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Include jquery because kdizzle probably uses it-->
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous">
+    </script>
+
+    <script>
+        $(document).ready(function(){
+
+            const the_body = $('body');
+            const checkmark_html = '<span class="checkmark"></span>';
+            //NOTE: "select_only_one_playlist" is used to "toggle" select many/select one (i.e. checkboxes vs radio buttons)
+            const select_only_one_playlist = true;
+
+            the_body.on('click', '.select_icon_container', function () {
+                console.log('select_icon_container clicked!');
+                var icon_container = $(this);
+                var icon = icon_container.find('.arc');
+                var parent_list_item_container = icon_container.closest('.list_item_container');
+                var playlist_id = parent_list_item_container.prop('id');
+
+                if(parent_list_item_container.hasClass('selected'))
+                {
+                    parent_list_item_container.removeClass('selected').find('.arc').removeClass('arc_partial arc_full').find('span.checkmark').remove();
+                }
+                else
+                {
+                    if(select_only_one_playlist)
+                    {
+                        parent_list_item_container.closest('.list_container').find('.list_item_container').removeClass('selected').find('.arc').removeClass('arc_partial arc_full').find('span.checkmark').remove();
+                    }
+
+                    parent_list_item_container.addClass('selected');
+                    if(parent_list_item_container.hasClass('partial_playlist'))
+                    {
+                        //TODO: tell the user they don't have all songs in playlist
+                        console.log('partial playlist selected! id = ',playlist_id);
+                        icon.addClass('arc_partial').html(checkmark_html);
+                    }
+                    else
+                    {
+                        console.log('full playlist selected! id = ',playlist_id);
+                        icon.addClass('arc_full').html(checkmark_html);
+                    }
+                }
+
+                displayStartSessionButton();
+
+            });
+
+            the_body.on('click', '#start_session_button', function () {
+                console.log('start_session_button clicked!');
+                //TODO: hook in backend thing here to start session
+
+            });
+
+            //This function can be used to decide if a session can be started, for now it will just show when a playlist is selected
+            function displayStartSessionButton()
+            {
+                var selected_playlists = the_body.find('.list_item_container.selected');
+                var start_session_button = $('#start_session_button');
+
+                if(selected_playlists.length > 0)
+                {
+                    if(select_only_one_playlist)
+                    {
+                        var playlist_id_selected = selected_playlists.prop('id');
+                        start_session_button.slideDown();
+                    }
+                    else
+                    {
+                        //TODO: this depends backend factors (i.e. can we select multiple soundcloud playlists)
+                    }
+
+                }
+                else
+                {
+                    start_session_button.slideUp();
+                }
+            }
+        });//end document.ready function
+
+
+    </script>
+
+    <title>Title</title>
+    <style>
+
+        body {
+            background-color: black;
+            color: #e0e0e0;
+            margin: 0;
+            font-family: sans-serif;
+            font-size: 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 75rem;
+            margin: 0 auto;
+        }
+
+        .list_container {
+            width: 100%;
+            padding-left: 1rem;
+            /*margin-top: 0.5rem;*/
+            margin-right: 0;
+            margin-bottom: 49px;
+
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+        }
+
+        .list_item_container {
+            width: 100%;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: #454545 1px solid;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+        }
+
+        .list_item_container .column {
+            height: 100%;
+            box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+        }
+
+        .list_item_container .image_container {
+            width: 15%;
+        }
+        .image_container img {
+            display: block; /*this forces image to be a block to prevent spacing caused by inline elements*/
+            width: 100%;
+        }
+
+        .list_item_container .text_container {
+            width: 65%;
+            height: 100%;
+            padding-left: 0.5rem;
+        }
+        .list_item_container .text_container .playlist_name {
+            font-weight: bold;
+        }
+        .list_item_container .text_container .song_count {
+            font-weight: normal;
+            font-size: 0.75rem;
+        }
+        .list_item_container .select_icon_container {
+            justify-content: center;
+            width: 20%;
+        }
+        #start_session_button {
+            display: none;
+            font-size: 25px;
+            position: fixed;
+            bottom: -1px;
+            right: 0;
+            z-index: 500;
+            width: 100%;
+            height: 50px;
+            text-align: center;
+            line-height: 50px;
+            background-color:#2979ff;
+            border-top: #454545 2px solid;
+            color: #e0e0e0;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+
+
+
+
+
+        .arc {
+            width:1.75rem;
+            height:1.75rem;
+            border-radius:100%;
+            border:2px solid #2979ff;
+            margin: 0 2px;
+        }
+        .arc_partial {
+            border-color:grey #2979ff #2979ff #2979ff;
+            border-width: 2px 4px 4px 4px;
+            transform: rotate(45deg); /* Arc from 0 degrees */
+            -webkit-transform: rotate(45deg);  /* Chrome, Opera 15+, Safari 3.1+ */
+            -ms-transform: rotate(45deg);  /* IE 9  */
+            margin:0;
+        }
+
+        .arc_full {
+            border-width: 4px;
+            background: #2979ff;
+            margin:0;
+        }
+
+        .checkmark {
+            display:inline-block;
+            width: 1.75rem;
+            height: 1.75rem;
+            background: none;
+            border-radius:50%;
+        }
+        .arc_full .checkmark {
+            background: #2979ff;
+            -ms-transform: rotate(45deg); /* IE 9 */
+            -webkit-transform: rotate(45deg); /* Chrome, Safari, Opera */
+            transform: rotate(45deg);
+        }
+
+        .checkmark:before{
+            content:"";
+            position: absolute;
+            width:4px;
+            height:14px;
+            background-color:#fff;
+            left:14px;
+            top:5px;
+        }
+
+        .checkmark:after{
+            content:"";
+            position: absolute;
+            width:9px;
+            height:4px;
+            background-color:#fff;
+            left:9px;
+            top:16px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!--THE BLUE BAR AT THE TOP-->
+    <div id="top_bar"></div>
+
+    <div class="list_container">
+
+        <!--PARTIAL PLAYLIST: Has class "partial_playlist" and gets "selected" + "arc_partial" + inserts span checkmark when selected-->
+        <div id="playlist00" class="list_item_container partial_playlist">
+            <div class="column image_container">
+                <img src="album_artwork_00.jpg" alt="image_name_here">
+            </div>
+            <div class="column text_container">
+                <div class="">
+                    <div class="playlist_name">Songs for Sam</div>
+                    <div class="song_count">Baron James &#8226; 12 songs</div>
+                </div>
+            </div>
+            <div class="column select_icon_container">
+                <div class="arc <!--arc_partial-->">
+                    <!--<span class="checkmark"></span>-->
+                </div>
+            </div>
+        </div>
+
+        <!--FULL PLAYLIST: Has class "full_playlist" and gets "selected" + "arc_full" + inserts span checkmark when selected-->
+        <div id="playlist01" class="list_item_container full_playlist">
+            <div class="column image_container">
+                <img src="album_artwork_00.jpg" alt="image_name_here">
+            </div>
+            <div class="column text_container">
+                <div class="">
+                    <div class="playlist_name">Songs for Sam</div>
+                    <div class="song_count">Baron James &#8226; 12 songs</div>
+                </div>
+            </div>
+            <div class="column select_icon_container">
+                <div class="arc <!--arc_full-->">
+                    <!--<span class="checkmark"></span>-->
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+        <!--DUPLICATED LIST ITEMS HERE-->
+        <!--PARTIAL PLAYLIST: Has class "partial_playlist" and gets "selected" + "arc_partial" + inserts span checkmark when selected-->
+        <div id="playlist02" class="list_item_container partial_playlist">
+            <div class="column image_container">
+                <img src="album_artwork_00.jpg" alt="image_name_here">
+            </div>
+            <div class="column text_container">
+                <div class="">
+                    <div class="playlist_name">Songs for Sam</div>
+                    <div class="song_count">Baron James &#8226; 12 songs</div>
+                </div>
+            </div>
+            <div class="column select_icon_container">
+                <div class="arc <!--arc_partial-->">
+                    <!--<span class="checkmark"></span>-->
+                </div>
+            </div>
+        </div>
+
+        <!--FULL PLAYLIST: Has class "full_playlist" and gets "selected" + "arc_full" + inserts span checkmark when selected-->
+        <div id="playlist03" class="list_item_container full_playlist">
+            <div class="column image_container">
+                <img src="album_artwork_00.jpg" alt="image_name_here">
+            </div>
+            <div class="column text_container">
+                <div class="">
+                    <div class="playlist_name">Songs for Sam</div>
+                    <div class="song_count">Baron James &#8226; 12 songs</div>
+                </div>
+            </div>
+            <div class="column select_icon_container">
+                <div class="arc <!--arc_full-->">
+                    <!--<span class="checkmark"></span>-->
+                </div>
+            </div>
+        </div>
+        <!--PARTIAL PLAYLIST: Has class "partial_playlist" and gets "selected" + "arc_partial" + inserts span checkmark when selected-->
+        <div id="playlist04" class="list_item_container partial_playlist">
+            <div class="column image_container">
+                <img src="album_artwork_00.jpg" alt="image_name_here">
+            </div>
+            <div class="column text_container">
+                <div class="">
+                    <div class="playlist_name">Songs for Sam</div>
+                    <div class="song_count">Baron James &#8226; 12 songs</div>
+                </div>
+            </div>
+            <div class="column select_icon_container">
+                <div class="arc <!--arc_partial-->">
+                    <!--<span class="checkmark"></span>-->
+                </div>
+            </div>
+        </div>
+
+        <!--FULL PLAYLIST: Has class "full_playlist" and gets "selected" + "arc_full" + inserts span checkmark when selected-->
+        <div id="playlist05" class="list_item_container full_playlist">
+            <div class="column image_container">
+                <img src="album_artwork_00.jpg" alt="image_name_here">
+            </div>
+            <div class="column text_container">
+                <div class="">
+                    <div class="playlist_name">Songs for Sam</div>
+                    <div class="song_count">Baron James &#8226; 12 songs</div>
+                </div>
+            </div>
+            <div class="column select_icon_container">
+                <div class="arc <!--arc_full-->">
+                    <!--<span class="checkmark"></span>-->
+                </div>
+            </div>
+        </div>
+        <!--PARTIAL PLAYLIST: Has class "partial_playlist" and gets "selected" + "arc_partial" + inserts span checkmark when selected-->
+        <div id="playlist06" class="list_item_container partial_playlist">
+            <div class="column image_container">
+                <img src="album_artwork_00.jpg" alt="image_name_here">
+            </div>
+            <div class="column text_container">
+                <div class="">
+                    <div class="playlist_name">Songs for Sam</div>
+                    <div class="song_count">Baron James &#8226; 12 songs</div>
+                </div>
+            </div>
+            <div class="column select_icon_container">
+                <div class="arc <!--arc_partial-->">
+                    <!--<span class="checkmark"></span>-->
+                </div>
+            </div>
+        </div>
+
+        <!--FULL PLAYLIST: Has class "full_playlist" and gets "selected" + "arc_full" + inserts span checkmark when selected-->
+        <div id="playlist07" class="list_item_container full_playlist">
+            <div class="column image_container">
+                <img src="album_artwork_00.jpg" alt="image_name_here">
+            </div>
+            <div class="column text_container">
+                <div class="">
+                    <div class="playlist_name">Songs for Sam</div>
+                    <div class="song_count">Baron James &#8226; 12 songs</div>
+                </div>
+            </div>
+            <div class="column select_icon_container">
+                <div class="arc <!--arc_full-->">
+                    <!--<span class="checkmark"></span>-->
+                </div>
+            </div>
+        </div>
+        <!--PARTIAL PLAYLIST: Has class "partial_playlist" and gets "selected" + "arc_partial" + inserts span checkmark when selected-->
+        <div id="playlist08" class="list_item_container partial_playlist">
+            <div class="column image_container">
+                <img src="album_artwork_00.jpg" alt="image_name_here">
+            </div>
+            <div class="column text_container">
+                <div class="">
+                    <div class="playlist_name">Songs for Sam</div>
+                    <div class="song_count">Baron James &#8226; 12 songs</div>
+                </div>
+            </div>
+            <div class="column select_icon_container">
+                <div class="arc <!--arc_partial-->">
+                    <!--<span class="checkmark"></span>-->
+                </div>
+            </div>
+        </div>
+
+        <!--FULL PLAYLIST: Has class "full_playlist" and gets "selected" + "arc_full" + inserts span checkmark when selected-->
+        <div id="playlist09" class="list_item_container full_playlist">
+            <div class="column image_container">
+                <img src="album_artwork_00.jpg" alt="image_name_here">
+            </div>
+            <div class="column text_container">
+                <div class="">
+                    <div class="playlist_name">Songs for Sam</div>
+                    <div class="song_count">Baron James &#8226; 12 songs</div>
+                </div>
+            </div>
+            <div class="column select_icon_container">
+                <div class="arc <!--arc_full-->">
+                    <!--<span class="checkmark"></span>-->
+                </div>
+            </div>
+        </div>
+        <!--END DUPLICATED LIST ITEMS-->
+
+    </div>
+
+    <a href="#" id="start_session_button" title="Start Session">
+        Start Your Session Now
+    </a>
+</div>
+
+</body>
+</html>
