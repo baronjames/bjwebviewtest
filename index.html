@@ -18,6 +18,9 @@
             font-size: 1rem;
         }
 
+        #top_bar {
+            border-bottom: 2px solid #2979ff;
+        }
         .container {
             width: 100%;
             max-width: 75rem;
@@ -76,7 +79,7 @@
             padding-left: 0.5rem;
         }
         .list_item_container .text_container .playlist_name {
-            font-weight: bold;
+            font-weight: normal;
         }
         .list_item_container .text_container .song_count {
             font-weight: normal;
@@ -85,7 +88,7 @@
         .list_item_container .select_icon_container {
             justify-content: center;
             width: 20%;
-            cursor: pointer;
+            cursor: pointer; /* this is needed for iOS to know it is clickable */
         }
         #start_session_button {
             display: none;
@@ -101,7 +104,7 @@
             background-color:#2979ff;
             border-top: #454545 2px solid;
             color: #e0e0e0;
-            cursor: pointer;
+            cursor: pointer; /* this is needed for iOS to know it is clickable */
             text-decoration: none;
         }
 
